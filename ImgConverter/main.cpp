@@ -54,7 +54,6 @@ class BMP : public ImageFormatInterface
         return img_lib::LoadBMP(file);
     }
 };
-} // ImageFormats
 
 
 enum class Format : uint8_t
@@ -78,30 +77,30 @@ Format GetFormatByExtension(const img_lib::Path& input_file) {
     if (ext == ".bmp"sv) {
         return Format::BMP;
     }
-
+    
     return Format::UNKNOWN;
 }
 
-ImageFormats::ImageFormatInterface* GetFormatInterface(const img_lib::Path& path)
+ImageFormatInterface* GetFormatInterface(const img_lib::Path& path)
 {
-    ImageFormats::ImageFormatInterface *res = nullptr;
+    ImageFormatInterface *res = nullptr;
     switch (GetFormatByExtension(path))
     {
         case Format::JPEG:
         {
-            static ImageFormats::Jpeg jpeg;
+            static Jpeg jpeg;
             res = &jpeg;
             break;
         }
         case Format::PPM:
         {
-            static ImageFormats::Ppm ppm;
+            static Ppm ppm;
             res = &ppm;
             break;
         }
         case Format::BMP:
         {
-            static ImageFormats::BMP ppm;
+            static BMP ppm;
             res = &ppm;
             break;
         }
@@ -112,8 +111,7 @@ ImageFormats::ImageFormatInterface* GetFormatInterface(const img_lib::Path& path
     }
     return res;
 }
-
-
+} // ImageFormats
 
 
 
@@ -126,14 +124,14 @@ int main(int argc, const char** argv) {
     img_lib::Path in_path = argv[1];
     img_lib::Path out_path = argv[2];
 
-    auto inputFormat = GetFormatInterface(in_path);
+    auto inputFormat = ImageFormats::GetFormatInterface(in_path);
     if (!inputFormat)
     {
         cout << "Unknown format of the input file" << endl;
         return 2;
     }
 
-    auto outputFormat = GetFormatInterface(out_path);
+    auto outputFormat = ImageFormats::GetFormatInterface(out_path);
     if (!outputFormat)
     {
         cout << "Unknown format of the output file" << endl;

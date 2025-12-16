@@ -35,9 +35,12 @@ PACKED_STRUCT_BEGIN BitmapFileHeader {
 }
 PACKED_STRUCT_END
 
+#define BYTES_PER_PIXEL (3U)
+#define ALIGNMENT_BYTES (4U)
+
 // функция вычисления отступа по ширине
 static int GetBMPStride(int w) {
-    return 4 * ((w * 3 + 3) / 4);
+    return ALIGNMENT_BYTES * ((w * BYTES_PER_PIXEL + BYTES_PER_PIXEL) / ALIGNMENT_BYTES);
 }
 
 // напишите эту функцию
@@ -117,7 +120,15 @@ Image LoadBMP(const Path& file)
     BitmapInfoHeader info_header;
 
     ifs.read(reinterpret_cast<char*>(&file_header), sizeof(file_header));
+    if (!ifs)
+    {
+        return {};
+    }
     ifs.read(reinterpret_cast<char*>(&info_header), sizeof(info_header));
+    if (!ifs)
+    {
+        return {};
+    }
 
     if (file_header.bfType != 0x4D42)
     { // 'BM'
